@@ -1,0 +1,76 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'For Module7 Assignment 2, this template  creates 1 VPC with subnet and then launches an EC2 instance with a tag CFInstance'
+Resources:
+  #VPC Creation
+  mod7ass2vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: '20.20.0.0/16'
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+  #Public Subnet Creation
+  mod7ass2publicsubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: mod7ass2vpc
+      CidrBlock: '20.20.1.0/24'
+      AvailabilityZone: 'us-east-1a'
+      MapPublicIpOnLaunch: 'true' #Maps a public IP on launch as this is a public subnet
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+  #RouteTable for Public Subnet
+  mod7ass2publicroutetable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: mod7ass2vpc
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+  #Attach public route table to public subnet
+  mod7ass2attachpublicrttosubnet:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: mod7ass2publicsubnet
+      RouteTableId:
+        Ref: mod7ass2publicroutetable
+  #Create Internet Gateway
+  mod7ass2internetgw:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+  #Attach Internet Gateway to VPC
+  mod7ass2subnetigw:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId:
+        Ref: mod7ass2internetgw
+      VpcId:
+        Ref: mod7ass2vpc
+  #Route entry in public route table for instances in the public subnet to reach the Internet and vice-versa.
+  mod7ass2publicroutetableroute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: mod7ass2internetgw
+      RouteTableId:
+        Ref: mod7ass2publicroutetable

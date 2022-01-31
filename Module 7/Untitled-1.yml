@@ -1,0 +1,56 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'For Module7 Assignment 2, this template  creates 1 VPC with subnet and then launches an EC2 instance with a tag CFInstance'
+Resources:
+  #VPC Creation
+  mod7ass2vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: '20.20.0.0/16'
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+  #Public Subnet Creation
+  mod7ass2publicsubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: mod7ass2vpc
+      CidrBlock: '20.20.1.0/24'
+      AvailabilityZone: 'us-east-1a'
+      MapPublicIpOnLaunch: 'true' #Maps a public IP on launch as this is a public subnet
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+  #RouteTable for Public Subnet
+  mod7ass2publicroutetable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: mod7ass2vpc
+      Tags:
+        - Key: Name
+          Value: Mod7Ass2
+        - Key: CreatedBy
+          Value: Mayuresh
+          #Create an EC2 instance of Aazon Linux called CFinstance in the public subnet
+  mod7ass2instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: 'us-east-1a'
+      ImageId: 'ami-0bebcdc3f3038fbce'
+      InstanceType: 't2.micro'
+      SubnetId:
+        Ref: mod7ass2publicsubnet
+      Tags:
+        - Key: Name
+          Value: CFinstance
+        - Key: CreatedBy
+          Value: Mayuresh

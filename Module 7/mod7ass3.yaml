@@ -1,0 +1,17 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'For Module7 Assignment 3, this template  creates S3 bucket adds SNS notifications to generate email at every step of stack creation process'
+#S3 creation
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: mod7ass3-intellipaat-mayuresh-tungare
+  #SNS Topic Creation
+  MySubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: mtungare@gmail.com
+      Protocol: email
+      TopicArn: 'arn:aws:sns:us-east-1:836827779012:mod7ass3'
